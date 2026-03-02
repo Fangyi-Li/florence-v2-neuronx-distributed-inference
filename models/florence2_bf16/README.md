@@ -4,7 +4,6 @@ Complete guide for deploying Microsoft Florence-2 vision-language model on AWS I
 
 ## Table of Contents
 
-- [Performance](#performance)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Compilation](#compilation)
@@ -12,20 +11,6 @@ Complete guide for deploying Microsoft Florence-2 vision-language model on AWS I
 - [Supported Tasks](#supported-tasks)
 - [Advanced Usage](#advanced-usage)
 - [Troubleshooting](#troubleshooting)
-
-## Performance
-
-BF16 precision achieves **45% throughput improvement** over FP32:
-
-| Metric | BF16 Performance |
-|--------|------------------|
-| **Single-Core QPS** | 4.09 queries/sec |
-| **Dual-Core QPS** | 8.18 queries/sec |
-| **CAPTION Latency** | 252ms |
-| **OD Latency** | 237ms |
-| **OCR Latency** | 231ms |
-
-**BF16 is 15.7x faster than CPU inference (~2000ms).**
 
 ## Prerequisites
 
@@ -131,13 +116,13 @@ This script:
 
 ## Supported Tasks
 
-| Task | Prompt | Output | Latency |
-|------|--------|--------|---------|
-| **Caption** | `<CAPTION>` | Brief image description | ~250ms |
-| **Detailed Caption** | `<DETAILED_CAPTION>` | Comprehensive description | ~280ms |
-| **Object Detection** | `<OD>` | Objects with bounding boxes | ~240ms |
-| **OCR** | `<OCR>` | Extracted text | ~230ms |
-| **Region Caption** | `<REGION_CAPTION>` | Description of specific region | ~260ms |
+| Task | Prompt | Output |
+|------|--------|--------|
+| **Caption** | `<CAPTION>` | Brief image description |
+| **Detailed Caption** | `<DETAILED_CAPTION>` | Comprehensive description |
+| **Object Detection** | `<OD>` | Objects with bounding boxes |
+| **OCR** | `<OCR>` | Extracted text |
+| **Region Caption** | `<REGION_CAPTION>` | Description of specific region |
 
 ### Task Examples
 
@@ -177,7 +162,7 @@ NEURON_RT_VISIBLE_CORES=1 python -m models.florence2_bf16.inference \
     --image img2.jpg --core 1 &
 ```
 
-This achieves **8+ QPS** on inf2.xlarge (2 NeuronCores).
+This achieves improved throughput on inf2.xlarge (2 NeuronCores).
 
 ### Custom Max Tokens
 
@@ -300,17 +285,6 @@ Input Image (768×768)
 
 ## Technical Details
 
-### BF16 vs FP32
-
-| Aspect | FP32 | BF16 | Improvement |
-|--------|------|------|-------------|
-| Precision | 32-bit | 16-bit | - |
-| Model Size | ~3GB | ~1.5GB | 50% smaller |
-| Memory Bandwidth | 2x | 1x | 50% reduction |
-| Latency | 393ms | 252ms | 36% faster |
-| Throughput | 2.82 QPS | 4.09 QPS | 45% higher |
-| Accuracy Loss | Baseline | <0.5% | Negligible |
-
 ### Bucket Strategy
 
 The decoder uses a bucketing strategy to handle variable-length sequences efficiently:
@@ -342,5 +316,3 @@ Example:
 Apache 2.0
 
 ---
-
-**For production deployments, this BF16 implementation is recommended over FP32.**

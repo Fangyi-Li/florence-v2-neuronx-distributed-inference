@@ -2,18 +2,6 @@
 
 Production-ready Florence-2 vision-language model integration with neuronx-distributed-inference (NxD) for AWS Inferentia2.
 
-## Performance
-
-| Metric | Target | Status |
-|--------|--------|--------|
-| CAPTION Latency | ≤260ms | ✓ |
-| OD Latency | ≤250ms | ✓ |
-| OCR Latency | ≤240ms | ✓ |
-| Single-Core QPS | ≥4.0 | ✓ |
-| Dual-Core QPS | ≥8.0 | ✓ |
-
-Tested on inf2.xlarge with BF16 precision.
-
 ## Features
 
 - **NxD Inference Integration**: Standardized model compilation and inference APIs
@@ -240,38 +228,6 @@ python -m models.florence2_nxd.vllm_server \
     --max-concurrent-requests 10 \            # Concurrent request limit
     --max-new-tokens 150 \                    # Default max tokens
     --log-level INFO                          # Logging level
-```
-
-## Performance Tuning
-
-### Tensor Parallelism
-
-| TP Degree | NeuronCores | Use Case | Expected QPS |
-|-----------|-------------|----------|--------------|
-| 1 | 1 | Development | 4+ |
-| 2 | 2 | Production | 8+ |
-| 4 | 4 | High throughput | 16+ |
-| 8 | 8 | Maximum throughput | 32+ |
-
-### Instance Selection
-
-| Instance | NeuronCores | Recommended TP | Max QPS |
-|----------|-------------|----------------|---------|
-| inf2.xlarge | 2 | 1-2 | 8 |
-| inf2.8xlarge | 2 | 1-2 | 8 |
-| inf2.24xlarge | 12 | 2-8 | 48 |
-| inf2.48xlarge | 24 | 4-8 | 96 |
-
-### Concurrent Requests
-
-Adjust `--max-concurrent-requests` based on your workload:
-- Development: 5-10
-- Production: 10-20
-- High traffic: 20-50
-
-Monitor with:
-```bash
-curl http://localhost:8000/stats
 ```
 
 ## Architecture
